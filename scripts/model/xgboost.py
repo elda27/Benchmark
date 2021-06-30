@@ -6,6 +6,7 @@ import pandas as pd
 from xgboost import XGBModel
 
 from model.trainer import Trainer
+from model.registry import register_trainer
 from model.sklearn_compatible_mixin import SklearnCompatibleMixin
 
 
@@ -33,8 +34,8 @@ class XGBoostModelProps(pydantic.BaseModel):
     metric: Literal['mean_absolute_error']
 
 
+@register_trainer('xgboost', XGBoostModelProps)
 class XGBTrainer(XGBModel, Trainer, SklearnCompatibleMixin):
-
     _config_keys = [
         'booster',
         'verbosity',
@@ -59,8 +60,9 @@ class XGBTrainer(XGBModel, Trainer, SklearnCompatibleMixin):
     _training_keys = []
     _predict_keys = []
 
-    def __init__(self, props: XGBoostModelProps) -> None:
+    def __init__(self, props: Optional[XGBoostModelProps]) -> None:
         self.props = props
+        super(Trainer, self).__init__(props)
         super(XGBModel, self).__init__(**self.get_config_options())
         super(SklearnCompatibleMixin, self).__init__()
 
