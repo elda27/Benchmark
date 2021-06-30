@@ -23,6 +23,7 @@ autopep8 = "^1.5.7"
 flakehell = "^0.9.0"
 pytest = "^6.2.4"
 poethepoet = "^0.10.0"
+flake8 = "^3.9.2"
 
 
 [tool.poe.env]
@@ -31,3 +32,7 @@ PYTHONPATH = "scripts/"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.flakehell]
+exclude = [".venv"]
+max_line_length = 100
