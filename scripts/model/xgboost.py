@@ -1,8 +1,12 @@
-from typing import List, Literal, Optional
+from typing import List, Any, Dict, Literal, Optional, Union
 
 import pydantic
+import numpy as np
 import pandas as pd
 from xgboost import XGBModel
+
+from model.trainer import Trainer
+from model.sklearn_compatible_mixin import SklearnCompatibleMixin
 
 
 class XGBoostModelProps(pydantic.BaseModel):
@@ -29,9 +33,53 @@ class XGBoostModelProps(pydantic.BaseModel):
     metric: Literal['mean_absolute_error']
 
 
-class XGBTrainer:
+class XGBTrainer(XGBModel, Trainer, SklearnCompatibleMixin):
+
+    _config_keys = [
+        'booster',
+        'verbosity',
+        'max_depth',
+        'learning_rate',
+        'n_estimators',
+        'objective',
+        'tree_method',
+        'n_jobs',
+        'gamma',
+        'min_child_weight',
+        'max_delta_step',
+        'subsample',
+        'colsample_bytree',
+        'colsample_bylevel',
+        'colsample_bynode',
+        'reg_alpha',
+        'reg_lambda',
+        'scale_pos_weight',
+        'num_parallel_tree',
+    ]
+    _training_keys = []
+    _predict_keys = []
+
     def __init__(self, props: XGBoostModelProps) -> None:
         self.props = props
-        self.model = XGBModel(
-            **props.dict()
-        )
+        super(XGBModel, self).__init__(**self.get_config_options())
+        super(SklearnCompatibleMixin, self).__init__()
+
+    def evaluate_contribute(
+        self, xs: Union[np.ndarray, pd.DataFrame]
+    ) -> Union[pd.DataFrame, List[pd.DataFrame]]:
+        contribs = self.get_booster().predict(xs, pred_contribs=True)
+        if isinstance(xs, pd.DataFrame):
+            def wrap_df(contrib):
+                return pd.DataFrame(
+                    contrib,
+                    columns=list(xs.columns) + ['$Baseline']
+                )
+            if contribs.ndim == 3:
+                return [
+                    wrap_df(contrib)
+                    for contrib in contribs
+                ]
+            else:
+                return wrap_df(contribs)
+        else:
+            return contribs
