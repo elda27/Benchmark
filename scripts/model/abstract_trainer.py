@@ -3,9 +3,21 @@ from abc import ABCMeta, abstractmethod
 from typing import Dict, Any, List, Union
 import pandas as pd
 import numpy as np
+from model.runtime_params import RuntimeParams
 
 
 class AbstractTrainer(metaclass=ABCMeta):
+    @abstractmethod
+    def get_runtime_options(self) -> Dict[RuntimeParams, Any]:
+        """Get runtime parameters
+
+        Returns
+        -------
+        Dict[RuntimeParams, Any]
+            configuration parameters
+        """
+        raise NotImplementedError()
+
     @abstractmethod
     def get_config_options(self) -> Dict[str, Any]:
         """Get initialize parameters

@@ -57,8 +57,11 @@ class XGBTrainer(XGBModel, Trainer, SklearnCompatibleMixin):
         'scale_pos_weight',
         'num_parallel_tree',
     ]
-    _training_keys = []
+    _training_keys = [
+        'metric'
+    ]
     _predict_keys = []
+    _runtime_keys = []
 
     def __init__(self, props: Optional[XGBoostModelProps]) -> None:
         self.props = props

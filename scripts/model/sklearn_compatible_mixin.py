@@ -3,7 +3,7 @@ from functools import partial
 
 
 class SklearnCompatibleMixin:
-    def __init__(self, use_predict_proba=False) -> None:
+    def __init__(self, use_predict_proba=True) -> None:
         """Mixin class for scikit learn compatible class such as XGBoost or LightGBM.
         Every sub class should derrive `AbstractTrainer`
 
