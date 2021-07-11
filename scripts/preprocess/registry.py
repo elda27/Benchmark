@@ -22,7 +22,7 @@ def get_preprocessor_list() -> List[str]:
     return list(_preprocessor_registry.keys())
 
 
-def get_register_preprocessor(name: str) -> PreprocessRegistry:
+def get_register_preprocessor_registry(name: str) -> PreprocessRegistry:
     """Get registry from name
 
     Parameters
@@ -52,3 +52,7 @@ def register_preprocessor(name: str, props: Type[BaseModel]):
         _preprocessor_registry[name] = PreprocessRegistry(name, klass, props)
         return klass
     return _
+
+
+def get_preprocessor_props_type(name: str) -> Type[BaseModel]:
+    return get_register_preprocessor_registry(name).props_type

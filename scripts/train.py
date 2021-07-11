@@ -1,20 +1,21 @@
 import argparse
 import dataset
-import model
+import json
+from pathlib import Path
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--dataset', type=str, choices=dataset.get_dataset_names()
-    )
-    parser.add_argument(
-        '--model', type=str, choices=model.get_trainer_list(),
-    )
-    parser.add_argument()
+    parser.add_argument('--config', type=Path, required=True)
     args = parser.parse_args()
+    with open(args.config) as fp:
+        config = json.load(fp)
 
-    trainer_registry = model.get_register_tariner(args.model)
+    config = create_config(**config)
+
+
+def create_config(**kwargs):
+    kwargs['']
 
 
 if __name__ == '__main__':
