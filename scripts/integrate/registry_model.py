@@ -4,6 +4,7 @@ from typing import Dict, Type, NamedTuple
 
 class ModelRegistry(NamedTuple):
     model_name: str
+    model_type: type
     trainer_name: str
     preprocessor_name: str
     model_props: Type[BaseModel]
@@ -20,7 +21,8 @@ def register_model(
 ):
     def _(klass):
         _model_registry[model_name] = ModelRegistry(
-            model_name, trainer_name, preprocessor_name, model_props
+            model_name, klass,
+            trainer_name, preprocessor_name, model_props,
         )
         return klass
     return _
